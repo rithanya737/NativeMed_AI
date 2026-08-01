@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo1.png') }}">
+    <title>NativeMed AI - Explore Herbs</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/exploreherb.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a href="{{ url_for('home') }}" class="logo">
+            <div class="logo-circle">
+                <img src="{{ url_for('static', filename='img/logo1.png') }}" alt="NativeMed AI">
+            </div>
+            <h2>NativeMed AI</h2>
+        </a>
+
+        <p class="section-title">Platform</p>
+
+        <ul class="menu">
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-solid fa-table-columns"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('identify_herb') }}">
+                    <i class="fa-solid fa-seedling"></i>
+                    Identify Herb
+                </a>
+            </li>
+            <li class="active">
+                <a href="{{ url_for('explore_herbs') }}">
+                    <i class="fa-solid fa-book-open"></i>
+                    Herb Knowledge
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('chat') }}">
+                    <i class="fa-solid fa-robot"></i>
+                    AI Assistant
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('contribute') }}">
+                    <i class="fa-solid fa-users"></i>
+                    Contribute
+                </a>
+            </li>
+        </ul>
+
+        <p class="section-title second">Account</p>
+
+        <ul class="menu">
+            <li><a href="{{ url_for('dashboard') }}"><i class="fa-regular fa-user"></i> Profile</a></li>
+            <li><a href="#"><i class="fa-solid fa-gear"></i> Settings</a></li>
+            <li><a href="#"><i class="fa-regular fa-circle-question"></i> Help Center</a></li>
+        </ul>
+
+        <button id="logoutBtn" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Sign Out
+        </button>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="topbar-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="liveSearch" placeholder="Search herbs by name, scientific name...">
+            </div>
+            <div class="topbar-actions">
+                <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
+                <div class="avatar-circle"><i class="fa-solid fa-user"></i></div>
+            </div>
+        </div>
+
+        <section class="heading">
+            <h1>Explore Herb Knowledge</h1>
+            <p>Browse our comprehensive medicinal plant knowledge base — {{ herbs|length }} plants and counting.</p>
+        </section>
+
+        <!-- Cards -->
+        <div class="card-container" id="cardContainer">
+
+            {% for herb in herbs %}
+            <div class="card" data-search="{{ herb.plant_name|lower }} {{ herb.scientific_name|lower }}">
+
+                <div class="image">
+                    <img
+                        src="{{ url_for('static', filename='images/' ~ herb.image_file) }}"
+                        alt="{{ herb.plant_name }}"
+                        loading="lazy"
+                        onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/placeholder.jpg') }}';">
+                </div>
+
+                <div class="content">
+                    <h2>{{ herb.plant_name }}</h2>
+                    <h4>{{ herb.scientific_name }}</h4>
+                    <p>{{ herb.medicinal_properties[:120] }}{% if herb.medicinal_properties|length > 120 %}…{% endif %}</p>
+
+                    <button
+                        class="view-btn"
+                        data-name="{{ herb.plant_name }}"
+                        data-scientific="{{ herb.scientific_name }}"
+                        data-properties="{{ herb.medicinal_properties }}"
+                        data-uses="{{ herb.traditional_uses }}"
+                        data-cultural="{{ herb.cultural_significance }}"
+                        data-disease="{{ herb.diseases_treated }}"
+                        data-prep="{{ herb.preparation_method }}"
+                        data-howtotake="{{ herb.how_to_take }}"
+                        data-disclaimer="{{ herb.general_disclaimer }}"
+                        data-image="{{ url_for('static', filename='img/herbs/' ~ herb.image_file) }}"
+                    >
+                        View Details
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+
+            <p id="noResults" class="no-results hidden">No herbs match your search.</p>
+
+        </div>
+
+    </main>
+</div>
+
+<!-- Popup -->
+<div id="popup" class="popup">
+    <div class="popup-card">
+        <span id="closePopup">&times;</span>
+
+        <div class="popup-image">
+            <img src="" id="popupImage" alt="">
+        </div>
+
+        <div class="popup-content">
+            <h2 id="popupName"></h2>
+            <h4 id="popupScientific"></h4>
+            <hr>
+            <h3>Medicinal Properties</h3>
+            <p id="popupProperties"></p>
+
+            <h3>Traditional Uses</h3>
+            <p id="popupUses"></p>
+
+            <h3>Cultural Significance</h3>
+            <p id="popupCulture"></p>
+
+            <h3>Diseases Treated</h3>
+            <p id="popupDisease"></p>
+
+            <h3>Preparation Method</h3>
+            <p id="popupPrep"></p>
+
+            <h3>How To Take / Apply</h3>
+            <p id="popupHowToTake"></p>
+
+            <p id="popupDisclaimer" class="popup-disclaimer"></p>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/exploreherb.js') }}"></script>
+</body>
+</html>

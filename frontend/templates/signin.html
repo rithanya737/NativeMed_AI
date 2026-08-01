@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo1.png') }}">
+<title>NativeMed AI - Sign In</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signin.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+<div class="container">
+    <!-- LEFT IMAGE -->
+    <div class="left-panel">
+         <img src="{{ url_for('static', filename='img/signin_img.jpg') }}"
+         class="bg-image"
+         alt="Medicinal Plant">
+        <div class="overlay"></div>
+        <div class="welcome-text">
+            <h1>Welcome back to the garden.</h1>
+            <p> NativeMed AI bridges ancient wisdom and modern intelligence —
+                identify herbs, explore traditional knowledge,
+                and contribute to a living archive of indigenous healing.</p>
+        </div>
+    </div>
+
+    <!-- RIGHT FORM -->
+    <div class="right-panel">
+        <div class="logo">
+<!-- 
+            <div class="logo-circle">
+                <i class="fa-solid fa-leaf"></i>
+            </div> -->
+            <div class="logo-circle"><img src="{{ url_for('static', filename='img/logo1.png') }}" alt="NativeMed AI"></div>
+             <a href="{{ url_for('home') }}" style="text-decoration: none;"><h2>NativeMed <span>AI</span></h2></a> 
+        </div>
+        <div class="form-box">
+            <h1>Sign in</h1>
+            <p class="subtitle"> Continue your journey through medicinal plant knowledge.</p>
+            <form id="loginForm">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+                <div class="password-header">
+                    <label>Password</label>
+                    <a href="#"> Forgot password?</a>
+                </div>
+                <div class="password-box">
+                    <input type="password" id="password" placeholder="Enter password" required>
+                    <i class="fa-solid fa-eye" id="togglePassword"></i>
+                </div>
+                <div class="remember">
+                    <input type="checkbox">
+                    <span>Remember me for 30 days</span>
+                </div>
+                <button type="submit" class="primary-btn">Sign In</button>
+            </form>
+            <p class="bottom-text">
+                New here?
+                <a href="{{ url_for('register') }}">Create an account</a>
+            </p>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/signin.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,418 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: #F5FBF5;
+    color: #1f2937;
+}
+
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR (same as your other pages) */
+.sidebar {
+    width: 270px;
+    flex-shrink: 0;
+    background: #063b14;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    text-decoration: none;
+}
+
+.logo-circle {
+    width: 40px;
+    height: 40px;
+    background: #2f8f3a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.logo-circle img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.logo h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.logo span {
+    color: #4caf50;
+}
+
+.section-title {
+    color: #9dc4a1;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.second {
+    margin-top: 40px;
+}
+
+.menu {
+    list-style: none;
+}
+
+.menu li {
+    margin-bottom: 8px;
+}
+
+.menu li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    text-decoration: none;
+    padding: 14px;
+    border-radius: 12px;
+    transition: .3s;
+    font-size: 14.5px;
+}
+
+.menu li a:hover {
+    background: #115421;
+}
+
+.active a {
+    background: #115421;
+}
+
+.logout {
+    margin-top: auto;
+    border: none;
+    background: transparent;
+    color: white;
+    text-align: left;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 14px;
+    border-radius: 12px;
+}
+
+.logout:hover {
+    background: #115421;
+}
+
+/* MAIN */
+.content {
+    flex: 1;
+    padding: 30px 34px;
+    min-width: 0;
+}
+
+/* Topbar */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.topbar-search {
+    flex: 1;
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #F5FBF5;
+    border-radius: 30px;
+    padding: 12px 22px;
+}
+
+
+.topbar-search input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14.5px;
+    color: #1f2937;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.icon-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #374151;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.icon-btn:hover {
+    background: #eaf5ea;
+}
+
+.avatar-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #2E7D32;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Page header */
+.page-header {
+    margin-bottom: 25px;
+}
+
+.page-header h1 {
+    font-size: 32px;
+    color: #1B5E20;
+    margin-bottom: 6px;
+}
+
+.page-header p {
+    color: #6b7a72;
+    font-size: 15px;
+}
+
+/* Toast */
+.toast {
+    padding: 14px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.toast.success {
+    background: #e3f6e8;
+    color: #1f6f43;
+}
+
+.toast.error {
+    background: #fdeaea;
+    color: #b3261e;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Settings cards */
+.settings-card {
+    background: white;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, .05);
+    margin-bottom: 24px;
+    max-width: 720px;
+}
+
+.settings-card h2 {
+    font-size: 18px;
+    color: #1B5E20;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.card-subtitle {
+    color: #6b7a72;
+    font-size: 13.5px;
+    margin-bottom: 20px;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.form-group input {
+    padding: 11px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14.5px;
+    outline: none;
+    transition: .15s;
+}
+
+.form-group input:focus {
+    border-color: #2E7D32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, .12);
+}
+
+.btn-primary {
+    align-self: flex-start;
+    background: #2E7D32;
+    color: white;
+    border: none;
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-primary:hover {
+    background: #1B5E20;
+}
+
+.btn-secondary {
+    background: white;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.danger-zone {
+    border: 1px solid #fca5a5;
+}
+
+.danger-zone h2 {
+    color: #b3261e;
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-danger:hover {
+    background: #b3261e;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+/* .modal's own `display:flex` above has the same specificity as .hidden's
+   `display:none` (utility.css), and since .modal is declared later in this
+   file, it would otherwise always win -- silently keeping the modal visible
+   even with the "hidden" class applied. This combined selector has higher
+   specificity than either alone, so hidden always wins regardless of
+   declaration order (same fix already used in identifyherb.css). */
+.modal.hidden {
+    display: none;
+}
+
+.modal-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .25);
+}
+
+.modal-card h3 {
+    color: #1f2937;
+    margin-bottom: 10px;
+}
+
+.modal-card p {
+    color: #6b7280;
+    font-size: 13.5px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.modal-card input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 18px;
+    outline: none;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+@media (max-width:900px) {
+    .sidebar {
+        display: none;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}

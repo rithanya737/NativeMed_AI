@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo1.png') }}">
+<title>AI Herbal Assistant | NativeMed AI</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/identifyherb.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    
+    <aside class="sidebar">
+
+        <div class="logo">
+            <a href="{{ url_for('home') }}" class="logo">
+                <div class="logo-circle"><img src="{{ url_for('static', filename='img/logo1.png') }}" alt="NativeMed AI"></div>
+                <span>NativeMed <span class="green">AI</span></span>
+            </a>
+        </div>
+
+        <p class="section-title">Platform</p>
+
+        <ul class="menu">
+
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-solid fa-table-columns"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="{{ url_for('identify_herb') }}">
+                    <i class="fa-solid fa-seedling"></i>
+                    Identify Herb
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('explore_herbs') }}">
+                    <i class="fa-solid fa-book-open"></i>
+                    Herb Knowledge
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('chat') }}">
+                    <i class="fa-solid fa-robot"></i>
+                    AI Assistant
+                </a>
+            </li>
+
+            <!-- <li>
+                <a href="#">
+                    <i class="fa-solid fa-tree"></i>
+                    Garden Planner
+                </a>
+            </li> -->
+
+            <li>
+                <a href="{{ url_for('contribute') }}">
+                    <i class="fa-solid fa-users"></i>
+                    Contribute
+                </a>
+            </li>
+
+            <!-- <li>
+                <a href="#">
+                    <i class="fa-solid fa-map"></i>
+                    Conservation Map
+                </a>
+            </li> -->
+
+        </ul>
+
+        <p class="section-title second">
+            Account
+        </p>
+
+        <ul class="menu">
+
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-regular fa-user"></i>
+                    Profile
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('settings') }}">
+                    <i class="fa-solid fa-gear"></i>
+                    Settings
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('help_center') }}">
+                    <i class="fa-regular fa-circle-question"></i>
+                    Help Center
+                </a>
+            </li>
+
+        </ul>
+
+        <button id="logoutBtn" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Sign Out
+        </button>
+
+    </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="search-box">
+        <input type="text" placeholder="">
+      </div>
+
+      <div class="topbar-actions">
+        <button class="icon-btn">
+          <i class="fa-regular fa-bell"></i>
+        </button>
+        <div class="avatar-circle">
+          <i class="fa-solid fa-user"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="assistant-header">
+      <div>
+        <h1>AI Herbal Assistant</h1>
+        <p class="subtitle">Powered by indigenous knowledge &amp; phytochemistry</p>
+      </div>
+      <button id="newChatBtn" class="new-chat-btn">⟲ New Chat</button>
+    </div>
+
+    <div id="suggestedWrap" class="suggested-wrap">
+      <p class="suggested-label">SUGGESTED QUESTIONS</p>
+      <div class="suggested-grid">
+        <button class="suggested-btn">✨ What are the benefits of Tulsi (Holy Basil)?</button>
+        <button class="suggested-btn">✨ Which herbs help with digestion and bloating?</button>
+        <button class="suggested-btn">✨ Traditional medicinal plants of the Amazon rainforest</button>
+        <button class="suggested-btn">✨ What is Ayurveda and how does it use herbs?</button>
+        <button class="suggested-btn">✨ Herbs safe for children with cold symptoms</button>
+        <button class="suggested-btn">✨ Anti-inflammatory herbs for joint pain</button>
+      </div>
+    </div>
+
+    <div id="chatWindow" class="chat-window">
+      <div class="message bot">
+        <div class="avatar bot-avatar">🌿</div>
+        <div class="bubble">
+          <p>Hello! I'm your NativeMed AI Herbal Assistant 🌿</p>
+          <p>I can help you explore medicinal plant knowledge, traditional healing practices, and herbal wellness guidance. I draw from indigenous knowledge databases and phytochemical research.</p>
+          <p>What would you like to know today?</p>
+          <span class="timestamp" id="initialTimestamp"></span>
+        </div>
+      </div>
+    </div>
+
+    <form id="chatForm" class="chat-input-bar" autocomplete="off">
+      <input type="text" id="chatInput" placeholder="Ask about medicinal herbs, traditional remedies, wellness..." required>
+      <button type="submit" id="sendBtn" class="send-btn">➤</button>
+    </form>
+    <p class="disclaimer">For educational purposes only. Always consult a qualified healthcare practitioner.</p>
+
+  </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:#edf8ec;
+}
+
+.container{
+    display:flex;
+    min-height:100vh;
+}
+
+/* LEFT */
+
+.left-section{
+    width:50%;
+    padding:40px 60px;
+}
+a {
+    color: inherit;
+    text-decoration: none; /* Optional: This also removes the default underline */
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10;
+    margin-bottom:40px;
+}
+
+.logo-circle{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#2f8f3a;
+    color:white;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.logo h1{
+    font-family:'Cormorant Garamond',serif;
+    font-size:30px;
+}
+
+.logo span{
+    color:#2f8f3a;
+}
+
+.small-title{
+    color:#2f8f3a;
+    font-weight:600;
+    letter-spacing:2px;
+    margin-bottom:20px;
+}
+
+.left-section h1{
+    font-family:'Cormorant Garamond',serif;
+    font-size:70px;
+    line-height:1.1;
+    margin-bottom:30px;
+}
+
+.description{
+    font-size:22px;
+    line-height:1.8;
+    color:#4f5f4f;
+    margin-bottom:40px;
+}
+
+.feature-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.feature-box{
+    background:white;
+    padding:20px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.feature-box i{
+    color:#2f8f3a;
+}
+
+.bottom-card{
+    margin-top:40px;
+    background:#2f8f3a;
+    color:white;
+    padding:30px;
+    border-radius:25px;
+}
+
+.bottom-card h3{
+    font-family:'Cormorant Garamond',serif;
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+/* RIGHT */
+
+.right-section{
+    width:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+}
+
+.top-link{
+    position:absolute;
+    top:40px;
+    right:60px;
+}
+
+.top-link a{
+    color:#2f8f3a;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.register-card{
+    background:#ffffff;
+    width:700px;
+    padding:40px;
+    border-radius:30px;
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+}
+
+.register-card h2{
+    font-family:'Cormorant Garamond',serif;
+    font-size:50px;
+}
+
+.sub-text{
+    color:#666;
+    margin-bottom:25px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    margin-top:18px;
+    font-weight:600;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border:1px solid #d5ddd5;
+    border-radius:14px;
+    font-size:15px;
+}
+
+.two-column{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.password-box{
+    position:relative;
+}
+
+.password-box i{
+    position:absolute;
+    top:16px;
+    right:15px;
+    cursor:pointer;
+}
+
+.checkbox{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:20px 0;
+}
+
+.checkbox input{
+    width:auto;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    border:none;
+    background:#2f8f3a;
+    color:white;
+    border-radius:15px;
+    font-size:18px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#24702d;
+}
+
+@media(max-width:1200px){
+
+.container{
+    flex-direction:column;
+}
+
+.left-section,
+.right-section{
+    width:100%;
+}
+
+.register-card{
+    width:95%;
+    margin:30px;
+}
+
+.left-section h1{
+    font-size:50px;
+}
+
+.two-column{
+    grid-template-columns:1fr;
+}
+
+}

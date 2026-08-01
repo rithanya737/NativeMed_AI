@@ -1,0 +1,9 @@
+# NativeMed AI -- Flask frontend dependencies.
+# Install with: pip install -r requirements.txt
+
+Flask==3.0.3
+requests==2.32.3
+python-dotenv==1.0.1
+mysql-connector-python==9.0.0
+pandas==2.2.3
+openpyxl==3.1.5

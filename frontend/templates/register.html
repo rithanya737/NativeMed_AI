@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo1.png') }}">
+<title>NativeMed AI - Register</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="container">
+    <!-- LEFT SIDE -->
+    <div class="left-section">
+        <div class="logo">
+            <!-- <div class="logo-circle">
+                <i class="fa-solid fa-leaf"></i>
+            </div> -->
+            <a href="{{ url_for('home') }}" style="text-decoration: none;"><h1><img src="{{ url_for('static', filename='img/logo1.png') }}" alt="Home" class="site-icon" width="50" height="50" object-fit:contain>NativeMed <span>AI</span></h1></a> 
+        </div>
+        <p class="small-title">JOIN NATIVEMED AI</p>
+        <h1>A living archive of indigenous healing — and you're part of it.</h1>
+        <p class="description">
+            NativeMed AI is built with and for the communities,
+            healers, researchers, and students who hold and study medicinal
+            plant knowledge. Creating an account unlocks AI-powered
+            identification, a curated knowledge base, a personal AI healthcare
+            companion, and the ability to contribute verified knowledge. </p>
+        <div class="feature-grid">
+            <div class="feature-box">
+                <i class="fa-solid fa-expand"></i>
+                AI plant identification
+            </div>
+            <div class="feature-box">
+                <i class="fa-solid fa-book-open"></i>
+                Curated knowledge base
+            </div>
+            <div class="feature-box">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                Personal AI healing assistant
+            </div>
+            <!-- <div class="feature-box">
+                <i class="fa-solid fa-seedling"></i>
+                Smart garden planner
+            </div> -->
+
+            <div class="feature-box">
+                <i class="fa-solid fa-users"></i>
+                Contribute & share knowledge
+            </div>
+            <!-- <div class="feature-box">
+                <i class="fa-solid fa-map"></i>
+                Conservation impact tracking
+            </div> -->
+        </div>
+        <div class="bottom-card">
+            <h3>Contribute. Conserve. Connect.</h3>
+            <p>Every verified contribution supports indigenous attribution,
+                biodiversity hotspot mapping, and conservation projects.</p>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right-section">
+        <div class="top-link">
+            Already a member?
+            <a href="{{ url_for('signin') }}"> Sign in </a>
+        </div>
+        <div class="register-card">
+            <h2>Create your account</h2>
+            <p class="sub-text">Free forever for individual researchers.</p>
+            <form id="registerForm">
+                <label>Full Name</label>
+                <input type="text" id="fullname" placeholder="Your name"  required>
+                <label>Email</label>
+                <input type="email" id="email"  required>
+                <div class="two-column">
+                    <div>
+                        <label>Password</label>
+                        <div class="password-box">
+                            <input type="password" id="password" required>
+                            <i class="fa-solid fa-eye" id="togglePassword"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Confirm Password</label>
+                        <input type="password" id="confirmPassword" required>
+                    </div>
+                </div>
+                <label>Country / Region</label>
+                <input type="text" id="country" placeholder="India">
+                <label>I am a</label>
+<select id="userRole" required>
+    <option value="" disabled selected>Select your role</option>
+    <option value="student">Student</option>
+    <option value="researcher">Researcher / Academic</option>
+    <option value="healer">Traditional Healer / Practitioner</option>
+    <option value="hobbyist">Herbal Enthusiast / Hobbyist</option>
+    <option value="conservationist">Conservationist</option>
+    <option value="other">Other</option>
+</select>
+
+<label>Organization / Institution <span class="optional-tag">(optional)</span></label>
+<input type="text" id="organization" placeholder="e.g. University name, NGO, research institute">
+                <div class="checkbox">
+                    <input  type="checkbox"  required>
+                    <span> I agree to Terms and Privacy Policy</span>
+                </div>
+                <button type="submit"> Create Account </button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+</body>
+</html>

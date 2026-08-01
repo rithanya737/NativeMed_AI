@@ -1,0 +1,11 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+frontend/node_modules/
+frontend/.env
+frontend/dist/
+frontend/build/
+.DS_Store
+backend/models/checkpoint_best_ema.pth

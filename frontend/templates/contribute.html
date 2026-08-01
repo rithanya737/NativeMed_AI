@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='img/logo1.png') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/contribute.css') }}"
+    />
+    <title>NativeMed AI - Knowledge Contribution</title>
+    <!-- <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/contribute.css') }}"> -->
+    <!-- Tailwind via CDN for instant preview; swap for build-step Tailwind in production -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#2E7D32",
+              "primary-dk": "#1B5E20",
+              "primary-lt": "#E8F5E9",
+              canvas: "#F9FBF9",
+            },
+            fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+            boxShadow: {
+              card: "0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)",
+              banner: "0 10px 28px rgba(46,125,50,0.18)",
+            },
+          },
+        },
+      };
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/identifyherb.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- SIDEBAR -->
+
+      <aside class="sidebar">
+        <div class="logo">
+          <a href="{{ url_for('home') }}" class="logo">
+            <div class="logo-circle">
+              <img
+                src="{{ url_for('static', filename='img/logo1.png') }}"
+                alt="NativeMed AI"
+              />
+            </div>
+            <span>NativeMed <span class="green">AI</span></span>
+          </a>
+        </div>
+
+        <p class="section-title">Platform</p>
+
+        <ul class="menu">
+          <li>
+            <a href="{{ url_for('dashboard') }}">
+              <i class="fa-solid fa-table-columns"></i>
+              Dashboard
+            </a>
+          </li>
+
+          <li class="active">
+            <a href="{{ url_for('identify_herb') }}">
+              <i class="fa-solid fa-seedling"></i>
+              Identify Herb
+            </a>
+          </li>
+
+          <li>
+            <a href="{{ url_for('explore_herbs') }}">
+              <i class="fa-solid fa-book-open"></i>
+              Herb Knowledge
+            </a>
+          </li>
+
+          <li>
+            <a href="{{ url_for('chat') }}">
+              <i class="fa-solid fa-robot"></i>
+              AI Assistant
+            </a>
+          </li>
+
+          <!-- <li>
+                <a href="#">
+                    <i class="fa-solid fa-tree"></i>
+                    Garden Planner
+                </a>
+            </li> -->
+
+          <li>
+            <a href="{{ url_for('contribute') }}">
+              <i class="fa-solid fa-users"></i>
+              Contribute
+            </a>
+          </li>
+
+          <!-- <li>
+                <a href="#">
+                    <i class="fa-solid fa-map"></i>
+                    Conservation Map
+                </a>
+            </li> -->
+        </ul>
+
+        <p class="section-title second">Account</p>
+
+        <ul class="menu">
+          <li>
+            <a href="{{ url_for('dashboard') }}">
+              <i class="fa-regular fa-user"></i>
+              Profile
+            </a>
+          </li>
+
+          <li>
+            <a href="{{ url_for('settings') }}">
+              <i class="fa-solid fa-gear"></i>
+              Settings
+            </a>
+          </li>
+
+          <li>
+            <a href="#">
+              <i class="fa-regular fa-circle-question"></i>
+              Help Center
+            </a>
+          </li>
+        </ul>
+
+        <button id="logoutBtn" class="logout">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Sign Out
+        </button>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="content">
+        <!-- TOPBAR -->
+        <div class="topbar">
+          <div class="topbar-search">
+            <input
+              type="text"
+              placeholder=""
+            />
+          </div>
+
+          <div class="topbar-actions">
+            <button class="icon-btn">
+              <i class="fa-regular fa-bell"></i>
+            </button>
+            <div class="avatar-circle">
+              <i class="fa-solid fa-user"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-inner">
+          <!-- ============ TITLE BLOCK ============ -->
+          <header class="mb-7">
+            <h1
+              class="text-3xl sm:text-4xl font-bold text-[#1B5E20] tracking-tight"
+            >
+              Knowledge Contribution
+            </h1>
+            <p class="mt-2 text-gray-500 text-base sm:text-lg">
+              Share indigenous medicinal knowledge with the global community
+            </p>
+          </header>
+
+          <!-- ============ BANNER ============ -->
+          <section
+            class="bg-[#2E7D32] rounded-2xl p-6 sm:p-8 mb-7 flex items-start gap-4 sm:gap-5 shadow-banner"
+          >
+            <div
+              class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center"
+            >
+              <!-- Lucide: users -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="26"
+                height="26"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </div>
+            <div>
+              <h2
+                class="text-white text-xl sm:text-2xl font-bold leading-tight"
+              >
+                Community-Driven Knowledge Base
+              </h2>
+              <p
+                class="mt-2 text-green-50/90 text-sm sm:text-base leading-relaxed"
+              >
+                Your contributions go through a 2-stage community review.
+                Approved content is credited to you and shared with researchers
+                worldwide.
+              </p>
+            </div>
+          </section>
+
+          <!-- ============ TABS ============ -->
+          <div class="flex flex-wrap gap-2 mb-7" role="tablist">
+            <button
+              class="tab-btn active"
+              data-tab="submit"
+              role="tab"
+              aria-selected="true"
+            >
+              📝 Submit Knowledge
+            </button>
+            <button
+              class="tab-btn inactive"
+              data-tab="contributions"
+              role="tab"
+              aria-selected="false"
+            >
+              📋 My Contributions
+            </button>
+          </div>
+
+          <!-- ============ SUBMIT PANEL ============ -->
+          <section
+            id="submit-panel"
+            class="bg-white rounded-2xl shadow-card border border-gray-100 p-6 sm:p-8"
+          >
+            <h3
+              class="text-xl font-bold text-[#1B5E20] mb-6 flex items-center gap-2"
+            >
+              <!-- Lucide: leaf -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#2E7D32"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19.2 2.96c1.4 5.59 1.4 11.55-.8 16.04-1.6 3.27-5.16 5.32-8.6 4.6"
+                />
+                <path d="M2 21c0-3 1.85-5.36 5.08-6" />
+              </svg>
+              Herb Information
+            </h3>
+
+            <form id="contribution-form" class="space-y-5" novalidate>
+              <!-- Row 1: 2 columns -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label class="field-label" for="herb-name">Herb Name *</label>
+                  <input
+                    id="herb-name"
+                    type="text"
+                    class="field"
+                    placeholder="e.g. Ashwagandha"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class="field-label" for="local-name"
+                    >Local / Indigenous Name *</label
+                  >
+                  <input
+                    id="local-name"
+                    type="text"
+                    class="field"
+                    placeholder="e.g. Asgandh, Kuthmithi"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- Row 2: full width -->
+              <div>
+                <label class="field-label" for="region"
+                  >Region / Community *</label
+                >
+                <input
+                  id="region"
+                  type="text"
+                  class="field"
+                  placeholder="e.g. Northern Kerala, Tribal community in Odisha, Amazon Basin"
+                  required
+                />
+              </div>
+
+              <!-- Row 3: Traditional Use -->
+              <div>
+                <label class="field-label" for="traditional-use"
+                  >Traditional Use *</label
+                >
+                <textarea
+                  id="traditional-use"
+                  class="field"
+                  rows="4"
+                  placeholder="Describe how this herb is traditionally used for healing..."
+                  required
+                ></textarea>
+              </div>
+
+              <!-- Row 5: Preparation Method -->
+              <div>
+                <label class="field-label" for="prep">Preparation Method</label>
+                <textarea
+                  id="prep"
+                  class="field"
+                  rows="3"
+                  placeholder="How is the herb prepared? (tea, tincture, paste, etc.)"
+                ></textarea>
+              </div>
+
+              <!-- Row 6: Cultural Significance -->
+              <div>
+                <label class="field-label" for="culture"
+                  >Cultural Significance</label
+                >
+                <textarea
+                  id="culture"
+                  class="field"
+                  rows="3"
+                  placeholder="Describe the cultural, spiritual, or ceremonial significance if
+  any..."
+                ></textarea>
+              </div>
+
+              <!-- Row 7: Safety Notes -->
+              <div>
+                <label class="field-label" for="safety"
+                  >Safety Notes & Contraindications</label
+                >
+                <textarea
+                  id="safety"
+                  class="field"
+                  rows="3"
+                  placeholder="Any known side effects, contraindications, or dosage
+  warnings..."
+                ></textarea>
+              </div>
+
+              <!-- ============ FILE UPLOAD ============ -->
+              <div>
+                <label class="field-label">Upload Photos / Documents</label>
+                <label
+                  for="file-input"
+                  class="upload-area px-6 py-10 text-center"
+                >
+                  <input
+                    id="file-input"
+                    type="file"
+                    multiple
+                    accept=".jpg,.jpeg,.png,.pdf"
+                    class="hidden"
+                  />
+                  <div class="flex flex-col items-center gap-3">
+                    <div
+                      class="w-12 h-12 rounded-full bg-[#E8F5E9] flex items-center justify-center"
+                    >
+                      <!-- Lucide: upload-cloud -->
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#2E7D32"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                      </svg>
+                    </div>
+                    <div
+                      class="text-sm sm:text-base font-semibold text-gray-700"
+                    >
+                      Click to upload plant photos or supporting documents
+                    </div>
+                    <div class="text-xs sm:text-sm text-gray-500">
+                      JPG, PNG, PDF up to 20MB each
+                    </div>
+                    <div
+                      id="file-list"
+                      class="w-full mt-3 space-y-2 text-left"
+                    ></div>
+                  </div>
+                </label>
+              </div>
+
+              <!-- ============ ACTION BUTTONS ============ -->
+              <div
+                class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 pt-2"
+              >
+                <button type="button" id="clear-btn" class="btn btn-secondary">
+                  Clear Form
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <!-- Lucide: plus -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  Submit for Review
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- ============ MY CONTRIBUTIONS PANEL ============ -->
+          <section
+            id="contributions-panel"
+            class="hidden bg-white rounded-2xl shadow-card border border-gray-100 p-6 sm:p-8"
+          >
+            <h3 class="text-xl font-bold text-[#1B5E20] mb-4">
+              My Contributions
+            </h3>
+            <div id="contributions-list" class="space-y-3">
+              <p class="text-gray-500">Loading your contributions...</p>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // ---------- Tab switching ----------
+      const tabs = document.querySelectorAll(".tab-btn");
+      const submitPanel = document.getElementById("submit-panel");
+      const contribPane = document.getElementById("contributions-panel");
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => {
+            t.classList.remove("active");
+            t.classList.add("inactive");
+            t.setAttribute("aria-selected", "false");
+          });
+          tab.classList.remove("inactive");
+          tab.classList.add("active");
+          tab.setAttribute("aria-selected", "true");
+
+          const target = tab.dataset.tab;
+          submitPanel.classList.toggle("hidden", target !== "submit");
+          contribPane.classList.toggle("hidden", target !== "contributions");
+
+          if (target === "contributions") {
+            loadMyContributions();
+          }
+        });
+      });
+
+      // ---------- My Contributions ----------
+      const contributionsList = document.getElementById("contributions-list");
+
+      const STATUS_STYLES = {
+        approved: "background:#dcfce7;color:#166534;",
+        rejected: "background:#fee2e2;color:#b91c1c;",
+        pending: "background:#fef9c3;color:#854d0e;",
+      };
+
+      function escapeHtmlLocal(value) {
+        const div = document.createElement("div");
+        div.textContent = value == null ? "" : String(value);
+        return div.innerHTML;
+      }
+
+      function renderContributions(items) {
+        if (!items.length) {
+          contributionsList.innerHTML = `
+          <p class="text-gray-500">
+            You haven't submitted any knowledge yet. Use the
+            <strong class="text-gray-700">Submit Knowledge</strong> tab to add your first contribution.
+          </p>
+        `;
+          return;
+        }
+
+        contributionsList.innerHTML = items
+          .map((item) => {
+            const statusKey = (item.status || "pending").toLowerCase();
+            const statusStyle =
+              STATUS_STYLES[statusKey] || STATUS_STYLES.pending;
+            const submitted = item.submitted_at
+              ? new Date(item.submitted_at).toLocaleDateString()
+              : "";
+            const statusLabel =
+              statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
+
+            return `
+          <div style="border:1px solid #f3f4f6;border-radius:12px;padding:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+            <div>
+              <p style="font-weight:600;color:#1f2937;">
+                ${escapeHtmlLocal(item.plant_name)}
+                ${item.local_name ? `<span style="color:#9ca3af;font-weight:400;">(${escapeHtmlLocal(item.local_name)})</span>` : ""}
+              </p>
+              ${item.region ? `<p style="font-size:0.875rem;color:#6b7280;margin-top:4px;">${escapeHtmlLocal(item.region)}</p>` : ""}
+              ${submitted ? `<p style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">Submitted ${submitted}</p>` : ""}
+            </div>
+            <span style="font-size:0.75rem;font-weight:600;padding:4px 12px;border-radius:9999px;white-space:nowrap;${statusStyle}">
+              ${statusLabel}
+            </span>
+          </div>
+        `;
+          })
+          .join("");
+      }
+
+      async function loadMyContributions() {
+        contributionsList.innerHTML =
+          '<p class="text-gray-500">Loading your contributions...</p>';
+        try {
+          const response = await fetch("/api/contributions");
+          if (response.status === 401) {
+            window.location.href = "/signin";
+            return;
+          }
+          if (!response.ok) {
+            contributionsList.innerHTML =
+              '<p class="text-gray-500">Could not load your contributions right now. Please try again.</p>';
+            return;
+          }
+          const data = await response.json();
+          renderContributions(data.contributions || []);
+        } catch (err) {
+          console.error("Failed to load contributions:", err);
+          contributionsList.innerHTML =
+            '<p class="text-gray-500">Could not load your contributions right now. Please try again.</p>';
+        }
+      }
+
+      // ---------- File upload (click + drag-and-drop) ----------
+      const fileInput = document.getElementById("file-input");
+      const fileList = document.getElementById("file-list");
+      const uploadArea = document.querySelector(".upload-area");
+
+      const formatSize = (bytes) => {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+        return (bytes / 1048576).toFixed(2) + " MB";
+      };
+
+      const renderFiles = (files) => {
+        fileList.innerHTML = "";
+        Array.from(files).forEach((file) => {
+          const row = document.createElement("div");
+          row.className =
+            "flex items-center justify-between text-xs text-gray-600 bg-white border border-gray-100 rounded-md px-3 py-2";
+          row.innerHTML = `
+          <span class="truncate">📎 ${file.name}</span>
+          <span class="text-gray-400 ml-2 whitespace-nowrap">${formatSize(file.size)}</span>
+        `;
+          fileList.appendChild(row);
+        });
+      };
+
+      fileInput.addEventListener("change", (e) => renderFiles(e.target.files));
+
+      ["dragenter", "dragover"].forEach((evt) =>
+        uploadArea.addEventListener(evt, (e) => {
+          e.preventDefault();
+          uploadArea.classList.add("dragover");
+        }),
+      );
+      ["dragleave", "drop"].forEach((evt) =>
+        uploadArea.addEventListener(evt, (e) => {
+          e.preventDefault();
+          uploadArea.classList.remove("dragover");
+        }),
+      );
+      uploadArea.addEventListener("drop", (e) => {
+        if (e.dataTransfer.files.length) {
+          fileInput.files = e.dataTransfer.files;
+          renderFiles(e.dataTransfer.files);
+        }
+      });
+
+      // ---------- Clear form ----------
+      document.getElementById("clear-btn").addEventListener("click", () => {
+        document.getElementById("contribution-form").reset();
+        fileList.innerHTML = "";
+      });
+
+      // ---------- Submit ----------
+      document
+        .getElementById("contribution-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const formData = new FormData();
+          formData.append(
+            "herb-name",
+            document.getElementById("herb-name").value,
+          );
+          formData.append(
+            "local-name",
+            document.getElementById("local-name").value,
+          );
+          formData.append("region", document.getElementById("region").value);
+          formData.append(
+            "traditional-use",
+            document.getElementById("traditional-use").value,
+          );
+          formData.append("prep", document.getElementById("prep").value);
+          formData.append("culture", document.getElementById("culture").value);
+          formData.append("safety", document.getElementById("safety").value);
+          Array.from(fileInput.files).forEach((file) =>
+            formData.append("files", file),
+          );
+
+          try {
+            const response = await fetch("/api/contribute", {
+              method: "POST",
+              body: formData,
+            });
+            if (response.status === 401) {
+              window.location.href = "/signin";
+              return;
+            }
+
+            const data = await response.json();
+            alert(data.message || "Submitted!");
+            if (data.success) {
+              e.target.reset();
+              fileList.innerHTML = "";
+              loadMyContributions(); // refresh so the new (pending) entry shows up right away
+            }
+          } catch (err) {
+            alert(
+              "Something went wrong submitting your contribution. Please try again.",
+            );
+            console.error(err);
+          }
+        });
+
+      // ---------- Logout ----------
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          localStorage.removeItem("loggedInUser");
+          window.location.href = "/signin";
+        });
+      }
+    </script>
+  </body>
+</html>

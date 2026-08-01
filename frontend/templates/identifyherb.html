@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo1.png') }}">
+<title>NativeMed AI - Identify Herb</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/identifyherb.css') }}">
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <a href="{{ url_for('home') }}" class="logo">
+                <div class="logo-circle"><img src="{{ url_for('static', filename='img/logo1.png') }}" alt="NativeMed AI"></div>
+                <span>NativeMed <span class="green">AI</span></span>
+            </a>
+        </div>
+
+        <p class="section-title">Platform</p>
+
+        <ul class="menu">
+
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-solid fa-table-columns"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="{{ url_for('identify_herb') }}">
+                    <i class="fa-solid fa-seedling"></i>
+                    Identify Herb
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('explore_herbs') }}">
+                    <i class="fa-solid fa-book-open"></i>
+                    Herb Knowledge
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('chat') }}">
+                    <i class="fa-solid fa-robot"></i>
+                    AI Assistant
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('contribute') }}">
+                    <i class="fa-solid fa-users"></i>
+                    Contribute
+                </a>
+            </li>
+
+        </ul>
+
+        <p class="section-title second">
+            Account
+        </p>
+
+        <ul class="menu">
+
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-regular fa-user"></i>
+                    Profile
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('settings') }}">
+                    <i class="fa-solid fa-gear"></i>
+                    Settings
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('help_center') }}">
+                    <i class="fa-regular fa-circle-question"></i>
+                    Help Center
+                </a>
+            </li>
+
+        </ul>
+
+        <button id="logoutBtn" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Sign Out
+        </button>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="content">
+
+        <!-- TOPBAR -->
+
+        <div class="topbar">
+
+            <div class="search-box">
+
+                <input
+                type="text"
+                placeholder="">
+
+            </div>
+
+            <div class="profile-area">
+
+                <i class="fa-regular fa-bell"></i>
+
+                <div class="avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- PAGE TITLE -->
+
+        <div class="page-header">
+
+            <h1>
+                Identify a medicinal herb
+            </h1>
+
+            <p>
+                Upload an image or use your camera —
+                our AI will identify the plant and its traditional uses.
+            </p>
+
+        </div>
+
+        <!-- IDENTIFICATION SECTION -->
+
+        <div class="identify-grid">
+
+            <!-- LEFT -->
+
+            <div class="upload-card">
+
+                <div id="dropArea" class="drop-area">
+
+                    <input
+                    type="file"
+                    id="fileInput"
+                    hidden
+                    accept="image/*">
+
+                    <div class="upload-icon">
+
+                        <i class="fa-solid fa-upload"></i>
+
+                    </div>
+
+                    <h3>
+                        Drag & Drop a plant photo
+                    </h3>
+
+                    <p>
+                        PNG or JPG up to 10MB
+                    </p>
+
+                    <small>
+                        Click anywhere to browse
+                    </small>
+
+                    <img
+                    id="previewImage"
+                    src=""
+                    alt="preview">
+
+                    <video id="cameraVideo" autoplay playsinline muted></video>
+
+                    <canvas id="cameraCanvas" hidden></canvas>
+
+                </div>
+
+                <div id="cameraControls" class="camera-controls" hidden>
+
+                    <button id="captureBtn" type="button" class="green-btn">
+                        <i class="fa-solid fa-camera"></i>
+                        Capture Photo
+                    </button>
+
+                    <button id="cancelCameraBtn" type="button" class="camera-btn">
+                        <i class="fa-solid fa-xmark"></i>
+                        Cancel
+                    </button>
+
+                </div>
+
+                <label class="explain-toggle">
+                    <input type="checkbox" id="explainToggle">
+                    Show AI Explanation (highlights what the AI looked at) — slower, can take a while on this machine
+                </label>
+
+                <div id="actionButtons" class="action-buttons">
+
+                    <button id="analyzeBtn" class="green-btn">
+
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+                        Run AI Analysis
+
+                    </button>
+
+                    <button id="cameraBtn" type="button" class="camera-btn">
+
+                        <i class="fa-solid fa-camera"></i>
+
+                        Use Camera
+
+                    </button>
+
+                </div>
+
+                <p class="tip">
+                    Tip: clear photos of leaves and flowers improve accuracy.
+                </p>
+
+            </div>
+
+            <!-- RIGHT -->
+
+            <div class="result-card">
+
+                <h2>
+                    AI Analysis
+                </h2>
+
+                <div id="resultArea">
+
+                    <p class="placeholder">
+                        Results will appear here after you upload an image.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/identifyherb.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | NativeMed AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+  <div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <a href="{{ url_for('home') }}" class="logo-link">
+        <div class="logo">
+          <div class="logo-circle"><i class="fa-solid fa-leaf"></i></div>
+          <h2>NativeMed <span>AI</span></h2>
+        </div>
+      </a>
+
+      <p class="section-title">Platform</p>
+      <ul class="menu">
+        <li class="active"><a href="{{ url_for('dashboard') }}"><i class="fa-solid fa-table-columns"></i>Dashboard</a></li>
+        <li><a href="{{ url_for('identify_herb') }}"><i class="fa-solid fa-seedling"></i>Identify Herb</a></li>
+        <li><a href="{{ url_for('explore_herbs') }}"><i class="fa-solid fa-book-open"></i>Herb Knowledge</a></li>
+        <li><a href="{{ url_for('chat') }}"><i class="fa-solid fa-robot"></i>AI Assistant</a></li>
+        <li><a href="{{ url_for('contribute') }}"><i class="fa-solid fa-users"></i>Contribute</a></li>
+      </ul>
+
+      <p class="section-title second">Account</p>
+      <ul class="menu">
+        <li><a href="#"><i class="fa-regular fa-user"></i>Profile</a></li>
+        <li><a href="{{ url_for('settings') }}"><i class="fa-solid fa-gear"></i>Settings</a></li>
+        <li><a href="{{ url_for('help_center') }}"><i class="fa-regular fa-circle-question"></i>Help Center</a></li>
+      </ul>
+
+      <button id="logoutBtn" class="logout"><i class="fa-solid fa-right-from-bracket"></i>Sign Out</button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="content">
+
+      <section class="welcome">
+        <div>
+          <p>Welcome back,</p>
+          <h1>{{ user_name or 'Explorer' }} 🌿</h1>
+          <p>Here's what's happening with your contributions and activity.</p>
+        </div>
+        <div class="welcome-buttons">
+          <a href="{{ url_for('identify_herb') }}">Identify a Plant</a>
+          <a href="{{ url_for('contribute') }}">Contribute Knowledge</a>
+        </div>
+      </section>
+
+      <!-- STAT CARDS -->
+      <section class="cards">
+        <div class="card"><h2>{{ total_queries }}</h2><p>AI Queries Made</p></div>
+        <div class="card"><h2>{{ total_contributions }}</h2><p>Knowledge Contributions</p></div>
+        <div class="card"><h2>{{ total_identifications }}</h2><p>Plants Identified</p></div>
+        <div class="card"><h2>{{ approved_contributions }}</h2><p>Approved Contributions</p></div>
+      </section>
+
+      <!-- ACTIVITY LINE CHART -->
+      <section class="charts">
+        <div class="chart-card">
+          <h3>Activity Overview (Last 7 Days)</h3>
+          <canvas id="activityChart"></canvas>
+        </div>
+      </section>
+
+      <!-- CATEGORY + MONTHLY CHARTS -->
+      <section class="charts-row">
+        <div class="chart-card">
+          <h3>Herb Categories Available</h3>
+          <canvas id="pieChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Monthly Contributions</h3>
+          <canvas id="contributionChart"></canvas>
+        </div>
+      </section>
+
+      <!-- RECENT ACTIVITY -->
+      <section class="bottom">
+        <div class="recent">
+          <h3>Recent Activity</h3>
+          <table>
+            <thead>
+              <tr><th>Type</th><th>Details</th><th>Status</th><th>Date</th></tr>
+            </thead>
+            <tbody id="recentActivityBody">
+              {% for item in recent %}
+              <tr>
+                <td>{{ item.type }}</td>
+                <td>{{ item.detail }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.date }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="4">No activity yet — try identifying a plant or asking the assistant a question.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="recent">
+          <h3>Quick Actions</h3>
+          <p style="margin-bottom:14px;color:#777;">Jump back into the platform.</p>
+          <a href="{{ url_for('chat') }}" style="display:block;margin-bottom:10px;">💬 Ask the AI Assistant</a>
+          <a href="{{ url_for('identify_herb') }}" style="display:block;margin-bottom:10px;">🌿 Identify a Plant</a>
+          <a href="{{ url_for('contribute') }}" style="display:block;">📝 Submit Knowledge</a>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Data injected fresh from the database on every page load
+    window.activityLabels        = {{ activity_labels | tojson }};
+    window.activityQueries       = {{ activity_queries | tojson }};
+    window.activityContributions = {{ activity_contributions | tojson }};
+    window.categoryLabels        = {{ category_labels | tojson }};
+    window.categoryCounts        = {{ category_counts | tojson }};
+    window.monthLabels           = {{ month_labels | tojson }};
+    window.monthContributionCounts = {{ month_contribution_counts | tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

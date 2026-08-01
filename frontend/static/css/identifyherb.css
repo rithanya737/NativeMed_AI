@@ -1,0 +1,430 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:#eef5ec;
+}
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* DASHBOARD */
+
+.dashboard{
+    display:flex;
+    min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:340px;
+    background:#063b14;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    padding:20px 15px;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:40px;
+}
+
+
+
+.logo h2{
+    font-family:'Cormorant Garamond',serif;
+    font-size:39px;
+}
+
+.logo span{
+    color:#4caf50;
+}
+
+.section-title{
+    color:#9dc4a1;
+    margin-bottom:15px;
+    font-size:14px;
+}
+
+.second{
+    margin-top:40px;
+}
+
+.menu{
+    list-style:none;
+}
+
+.menu li{
+    margin-bottom:8px;
+}
+
+.menu li a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:white;
+    text-decoration:none;
+    padding:14px;
+    border-radius:12px;
+    transition:.3s;
+}
+
+.menu li a:hover{
+    background:#115421;
+}
+
+.active a{
+    background:#115421;
+}
+
+.logout{
+    margin-top:auto;
+    border:none;
+    background:transparent;
+    color:white;
+    text-align:left;
+    font-size:18px;
+    cursor:pointer;
+    padding:15px;
+}
+
+/* MAIN CONTENT */
+
+.content{
+    flex:1;
+}
+
+/* TOPBAR */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 35px;
+    margin:20px;
+    border-radius:20px;
+    background:white;
+    border-bottom:1px solid #ddd;
+}
+
+.search-box{
+    background:white;
+    width:500px;
+    padding:12px 20px;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.search-box input{
+    border:none;
+    background:transparent;
+    width:100%;
+    outline:none;
+    font-size:16px;
+}
+
+.profile-area{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.profile-area i{
+    font-size:20px;
+    cursor:pointer;
+}
+
+.avatar{
+    width:45px;
+    height:45px;
+    background:#2f8f3a;
+    border-radius:50%;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+/* HEADER */
+
+.page-header{
+    padding:40px 35px 20px;
+}
+
+.page-header h1{
+    font-family:'Cormorant Garamond',serif;
+    font-size:70px;
+}
+
+.page-header p{
+    color:#4f5f4f;
+    font-size:22px;
+}
+
+/* GRID */
+
+.identify-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+    padding:20px 35px;
+}
+
+/* UPLOAD CARD */
+
+.upload-card,
+.result-card{
+    background:#f9f9f9;
+    border-radius:30px;
+    padding:25px;
+    box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.drop-area{
+    border:2px dashed #b5d3b3;
+    border-radius:25px;
+    min-height:420px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+}
+
+.upload-icon{
+    width:60px;
+    height:60px;
+    background:#2f8f3a;
+    color:white;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    margin-bottom:20px;
+}
+
+.drop-area h3{
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.drop-area p{
+    color:#666;
+}
+
+.drop-area small{
+    margin-top:15px;
+    color:#888;
+}
+
+#previewImage{
+    display:none;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    position:absolute;
+    inset:0;
+}
+
+#cameraVideo{
+    display:none;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    position:absolute;
+    inset:0;
+    background:#000;
+}
+
+.action-buttons{
+    display:flex;
+    gap:15px;
+    margin-top:20px;
+}
+
+.camera-controls{
+    display:flex;
+    gap:15px;
+    margin-top:20px;
+}
+
+/* The `hidden` attribute and the `.action-buttons`/`.camera-controls`
+   `display:flex` rule above have equal CSS specificity, so without this,
+   the flex rule wins and the [hidden] element stays visible. This bumps
+   the hidden-state selector's specificity so it always wins. */
+.action-buttons[hidden],
+.camera-controls[hidden]{
+    display:none;
+}
+
+.green-btn{
+    flex:1;
+    background:#2f8f3a;
+    color:white;
+    border:none;
+    padding:15px;
+    border-radius:15px;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.green-btn:disabled{
+    opacity:.6;
+    cursor:default;
+}
+
+.camera-btn{
+    padding:15px 25px;
+    border:1px solid #cdd7ca;
+    border-radius:15px;
+    background:white;
+    cursor:pointer;
+}
+
+.tip{
+    margin-top:15px;
+    color:#666;
+}
+
+.explain-toggle{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:20px;
+    font-size:14px;
+    color:#4f5f4f;
+    cursor:pointer;
+}
+
+.explain-toggle input{
+    cursor:pointer;
+}
+
+.explanation-box{
+    margin-top:20px;
+    padding-top:15px;
+    border-top:1px solid #e5e7eb;
+}
+
+.explanation-box h4{
+    font-size:16px;
+    color:#2f8f3a;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.explanation-image{
+    width:100%;
+    border-radius:15px;
+    display:block;
+}
+
+.explanation-note{
+    margin-top:10px;
+    font-size:13px;
+    color:#666;
+}
+
+.explanation-score{
+    margin-top:12px;
+    font-size:14px;
+    padding:8px 12px;
+    border-radius:10px;
+    display:inline-block;
+}
+
+.explanation-score.fidelity-high{
+    background:#e6f4ea;
+    color:#186a2e;
+}
+
+.explanation-score.fidelity-medium{
+    background:#fdf3e0;
+    color:#8a6d00;
+}
+
+.explanation-score.fidelity-low,
+.explanation-score.fidelity-unreliable{
+    background:#fbe9e7;
+    color:#a13a2b;
+}
+
+/* RESULT CARD */
+
+.result-card h2{
+    font-family:'Cormorant Garamond',serif;
+    font-size:45px;
+    margin-bottom:20px;
+}
+
+.placeholder{
+    text-align:center;
+    color:#666;
+    margin-top:180px;
+}
+
+.result-box{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+}
+
+.result-box h3{
+    color:#2f8f3a;
+    margin-bottom:10px;
+}
+
+.result-box p{
+    margin-bottom:10px;
+    line-height:1.7;
+}
+
+.result-box .disclaimer-note{
+    font-size:12.5px;
+    color:#8a6d00;
+    border-top:1px solid #e5e7eb;
+    padding-top:10px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1200px){
+
+.identify-grid{
+    grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:900px){
+
+.sidebar{
+    display:none;
+}
+
+.search-box{
+    width:250px;
+}
+
+.page-header h1{
+    font-size:45px;
+}
+
+}

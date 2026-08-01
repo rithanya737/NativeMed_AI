@@ -1,0 +1,21 @@
+# Environment
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Database
+database/*.db
+database/*.db-journal
+
+# Vector store
+vectorstore/chroma/
+
+# Generated audio
+data/audio_out/
+
+# OS / editor
+.DS_Store
+.vscode/
+*.log

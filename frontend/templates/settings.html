@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo1.png') }}">
+    <title>NativeMed AI - Settings</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a href="{{ url_for('home') }}" class="logo">
+            <div class="logo-circle">
+                <img src="{{ url_for('static', filename='img/logo1.png') }}" alt="NativeMed AI">
+            </div>
+            <h2>NativeMed <span>AI</span></h2>
+        </a>
+
+        <p class="section-title">Platform</p>
+
+        <ul class="menu">
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-solid fa-table-columns"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('identify_herb') }}">
+                    <i class="fa-solid fa-seedling"></i>
+                    Identify Herb
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('explore_herbs') }}">
+                    <i class="fa-solid fa-book-open"></i>
+                    Herb Knowledge
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('chat') }}">
+                    <i class="fa-solid fa-robot"></i>
+                    AI Assistant
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('contribute') }}">
+                    <i class="fa-solid fa-users"></i>
+                    Contribute
+                </a>
+            </li>
+        </ul>
+
+        <p class="section-title second">Account</p>
+
+        <ul class="menu">
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fa-regular fa-user"></i>
+                    Profile
+                </a>
+            </li>
+            <li class="active">
+                <a href="{{ url_for('settings') }}">
+                    <i class="fa-solid fa-gear"></i>
+                    Settings
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa-regular fa-circle-question"></i>
+                    Help Center
+                </a>
+            </li>
+        </ul>
+
+        <button id="logoutBtn" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Sign Out
+        </button>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="content">
+
+        <div class="topbar">
+            <div class="topbar-search">
+                <input type="text" placeholder="">
+            </div>
+            <div class="topbar-actions">
+                <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
+                <div class="avatar-circle"><i class="fa-solid fa-user"></i></div>
+            </div>
+        </div>
+
+        <header class="page-header">
+            <h1>Settings</h1>
+            <p>Manage your profile, password, and account.</p>
+        </header>
+
+        <div id="toast" class="toast hidden"></div>
+
+        <!-- PROFILE SECTION -->
+        <section class="settings-card">
+            <h2><i class="fa-regular fa-user"></i> Profile Information</h2>
+            <p class="card-subtitle">Update your name, email, and country.</p>
+
+            <form id="profileForm" class="settings-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="full_name">Full Name</label>
+                        <input type="text" id="full_name" value="{{ user.full_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" value="{{ user.email }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="country">Country / Region</label>
+                    <input type="text" id="country" value="{{ user.country or '' }}" placeholder="e.g. India">
+                </div>
+
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </form>
+        </section>
+
+        <!-- PASSWORD SECTION -->
+        <section class="settings-card">
+            <h2><i class="fa-solid fa-lock"></i> Change Password</h2>
+            <p class="card-subtitle">Choose a strong password you don't use elsewhere.</p>
+
+            <form id="passwordForm" class="settings-form">
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
+                    <input type="password" id="current_password" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="new_password">New Password</label>
+                        <input type="password" id="new_password" minlength="8" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm New Password</label>
+                        <input type="password" id="confirm_password" minlength="8" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Update Password</button>
+            </form>
+        </section>
+
+        <!-- DANGER ZONE -->
+        <section class="settings-card danger-zone">
+            <h2><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</h2>
+            <p class="card-subtitle">Permanently delete your account and all associated data. This cannot be undone.</p>
+
+            <button id="deleteAccountBtn" class="btn-danger">Delete My Account</button>
+        </section>
+
+    </main>
+</div>
+
+<!-- Delete confirmation modal -->
+<div id="deleteModal" class="modal hidden">
+    <div class="modal-card">
+        <h3>Confirm Account Deletion</h3>
+        <p>This will permanently delete your account and all your data. Enter your password to confirm.</p>
+        <input type="password" id="deleteConfirmPassword" placeholder="Your password">
+        <div class="modal-actions">
+            <button id="cancelDeleteBtn" class="btn-secondary">Cancel</button>
+            <button id="confirmDeleteBtn" class="btn-danger">Delete Permanently</button>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+</body>
+</html>

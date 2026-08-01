@@ -1,0 +1,50 @@
+# --- Core API ---
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+pydantic-settings==2.5.2
+python-multipart==0.0.9
+python-dotenv==1.0.1
+
+# --- Database ---
+# sqlite3 is part of the Python standard library, no package needed
+
+# --- RAG / Embeddings / Vector store ---
+sentence-transformers>=5.2.1
+chromadb==0.5.5
+
+# --- LLM ---
+# Ollama (default, free/local) needs no extra package -- it's called over
+# plain HTTP via httpx (already listed below under Testing).
+# openai is only needed if you switch LLM_PROVIDER=openai in .env.
+openai==1.51.0
+
+# --- Plant identification (image model, served from main.py's router,
+# merged into the combined app.py) ---
+rfdetr==1.9.0
+Pillow==12.3.0
+
+# --- Explainability (LIME visual explanations for plant identification --
+# see explainability/lime_explain.py) ---
+lime==0.2.0.1
+scikit-image==0.26.0
+
+# --- Multilingual ---
+langdetect==1.0.9
+deep-translator==1.11.4
+
+# --- Speech ---
+faster-whisper==1.0.3
+gTTS==2.5.3
+soundfile==0.12.1
+
+# --- Utilities ---
+pandas==2.2.3
+numpy==1.26.4
+openpyxl==3.1.5
+loguru==0.7.2
+tenacity==9.0.0
+
+# --- Testing (httpx is also used at runtime by the OllamaProvider) ---
+pytest==8.3.3
+httpx==0.27.2
