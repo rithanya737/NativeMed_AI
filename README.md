@@ -209,3 +209,5 @@ See `http://127.0.0.1:8000/docs` for full request/response schemas.
   currently a placeholder that doesn't call the real backend (the AI
   Assistant page instead calls the FastAPI backend directly from browser
   JS). Worth consolidating so there's exactly one code path per feature.
+#   N a t i v e M e d _ A I _ S y s t e m  
+ 
