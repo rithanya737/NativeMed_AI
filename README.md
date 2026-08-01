@@ -1,213 +1,644 @@
 # NativeMed AI
 
-An AI-powered medicinal plant assistant that combines a curated, cited
-knowledge base with image-based plant identification. Ask a question in
-English, Tamil, Hindi, Malayalam, Telugu, or Kannada (typed or spoken) and
-get a grounded answer traceable back to source passages and similarity
-scores — or upload/photograph a plant and get it identified against a
-130-plant database of traditional medicinal uses.
+**NativeMed AI** is an AI-powered medicinal plant assistant that combines a curated, cited knowledge base with image-based plant identification.
 
-The project is split into two independently-run apps that talk to each
-other over HTTP:
+Users can ask questions in **English, Tamil, Hindi, Malayalam, Telugu, or Kannada**, either by typing or speaking, and receive grounded answers that are traceable to source passages and similarity scores. Users can also upload or capture a plant image and identify it against a database of **130 medicinal plants** containing traditional medicinal knowledge and uses.
 
-| App        | Tech                  | Port | Role                                             |
-|------------|------------------------|------|---------------------------------------------------|
-| `backend/` | FastAPI (Python)       | 8000 | RAG chatbot, plant identification (RF-DETR), speech, translation — the single source of truth |
-| `frontend/`| Flask (Python) + HTML/JS/CSS | 5000 | User-facing web UI (dashboard, chat, identify, herb gallery, contribute) |
+The system is divided into two independently running applications that communicate over HTTP:
 
-## 1. Architecture
+| Application | Technology                   |   Port | Role                                                                                          |
+| ----------- | ---------------------------- | -----: | --------------------------------------------------------------------------------------------- |
+| `backend/`  | FastAPI (Python)             | `8000` | RAG chatbot, plant identification (RF-DETR), speech, translation — the single source of truth |
+| `frontend/` | Flask (Python) + HTML/JS/CSS | `5000` | User-facing web UI — dashboard, chat, plant identification, herb gallery, and contribution    |
 
+---
+
+# 1. Architecture
+
+```text
+                              Browser
+                                 │
+                 ┌───────────────┴────────────────┐
+                 │                                │
+                 ▼                                ▼
+      Flask Frontend (:5000)          FastAPI Backend (:8000)
+      - Renders web pages             - RAG chatbot
+      - Proxies image uploads         - Plant identification
+      - Legacy MySQL access           - Speech processing
+                                      - Translation
+                                      - API services
+                                                │
+                                                ▼
+                                      ┌───────────────────┐
+                                      │    plants.db      │
+                                      │      SQLite       │
+                                      │                   │
+                                      │  Source of truth  │
+                                      │  130 plants +     │
+                                      │  synonyms         │
+                                      └─────────┬─────────┘
+                                                │
+                                         rag/ingest.py
+                                       (one-time / updates)
+                                                │
+                                                ▼
+                                      ┌───────────────────┐
+                                      │     ChromaDB      │
+                                      │   Vector Store    │
+                                      │                   │
+                                      │ Derived / rebuildable
+                                      │ embedding index   │
+                                      └─────────┬─────────┘
+                                                │
+                                       rag/retriever.py
+                                                │
+                                                ▼
+                                  Translate → Embed → Retrieve
+                                  Top-K passages above threshold
+                                                │
+                                                ▼
+                                      ┌───────────────────┐
+                                      │ llm/generator.py  │
+                                      │                   │
+                                      │ Ollama / OpenAI   │
+                                      │ / Offline Mock    │
+                                      └─────────┬─────────┘
+                                                │
+                                  Explainability + Translation
+                                      + Optional TTS Audio
+                                                │
+                                                ▼
+                                          JSON Response
+
+                                      ┌───────────────────┐
+                                      │  ml/inference.py  │
+                                      │                   │
+                                      │ RF-DETR Image     │
+                                      │ Model Inference   │
+                                      └─────────┬─────────┘
+                                                │
+                                                ▼
+                                   /api/identify-plant
 ```
- Browser
-   │
-   ├── Flask frontend (:5000) ── renders pages, proxies image uploads
-   │                              to the backend, and (for legacy pages)
-   │                              reads/writes a MySQL database directly
-   │
-   └── Browser JS calls the FastAPI backend (:8000) directly for
-       /chat (AI Assistant page) — CORS is open on the backend for this
 
- FastAPI backend (:8000)
-   │
-   ├── plants.db (SQLite)        <- source of truth: 130 plants + synonyms
-   │        │  rag/ingest.py (one-time / on data change)
-   │        ▼
-   ├── ChromaDB vector store      <- derived, rebuildable embeddings index
-   │        │  rag/retriever.py
-   │        ▼
-   ├── translate → embed → retrieve top-K passages above similarity threshold
-   │        │
-   ├── llm/generator.py           <- Ollama (free/local, default) / OpenAI / offline mock
-   │        │
-   ├── explainability + translate back + optional TTS audio
-   │        ▼
-   │      JSON response
-   │
-   └── ml/inference.py            <- RF-DETR image model → /api/identify-plant
+### Key Design Decisions
+
+#### 1. SQLite as the Source of Truth
+
+**SQLite** is the authoritative database containing the 130 medicinal plants and their synonyms.
+
+**ChromaDB** is only a derived vector index. It can safely be deleted and regenerated using:
+
+```bash
+python -m rag.ingest
 ```
 
-Key design decisions (see `backend/` source for full detail):
+#### 2. Anti-Hallucination by Construction
 
-- **SQLite is the source of truth**; ChromaDB is a derived index rebuilt by
-  `rag/ingest.py` and can always be safely deleted and regenerated.
-- **Anti-hallucination by construction** — retrieval only returns passages
-  above a similarity threshold; if nothing clears the bar, the API returns
-  a fixed "I don't have enough verified information" answer instead of
-  letting the LLM guess.
-- **Explainability by construction** — every `/chat` response includes the
-  retrieved passages, their similarity scores, and a confidence label
-  derived only from retrieval, never the LLM's self-reported confidence.
-- **LLM provider is swappable and free by default** — `LLM_PROVIDER=ollama`
-  calls a free local model via the Ollama app (no API key, no cost, fully
-  private). OpenAI and an offline extractive mock are also supported.
+The retrieval pipeline only accepts passages whose similarity score exceeds a predefined threshold.
 
-## 2. Repository layout
+If no passage meets the required threshold, the API returns a fixed response:
 
+> "I don't have enough verified information."
+
+This prevents the LLM from generating unsupported answers.
+
+#### 3. Explainability by Construction
+
+Every `/chat` response includes:
+
+* Retrieved source passages
+* Similarity scores
+* Retrieval-based confidence label
+
+The confidence score is calculated from the **retrieval results**, not from the LLM's self-reported confidence.
+
+#### 4. Swappable LLM Providers
+
+The LLM provider can be changed without modifying the overall architecture.
+
+The default configuration uses:
+
+```text
+LLM_PROVIDER=ollama
 ```
+
+Ollama provides a free, local, and private LLM without requiring an API key.
+
+Other supported providers include:
+
+* **Ollama** — free/local
+* **OpenAI** — API-based
+* **Mock provider** — offline extractive fallback
+
+---
+
+# 2. Repository Layout
+
+```text
 NativeMed-AI/
-├── backend/                  FastAPI service — chatbot, plant ID, speech, translation
-│   ├── app.py                 Combined app: chatbot + plant-ID routers, CORS, lifespan
-│   ├── api/                   Chat/plants/health route definitions + Pydantic schemas
-│   ├── routers/plant_id.py    POST /api/identify-plant (image upload → RF-DETR)
-│   ├── ml/inference.py        Loads the trained RF-DETR checkpoint
-│   ├── models/                Trained model weights + training config
-│   ├── database/               SQLite schema, data import, query helpers
-│   ├── rag/                    Ingest, embeddings, retriever, prompt building
-│   ├── llm/generator.py        Ollama / OpenAI / mock LLM providers
-│   ├── translation/            Language detection + translation
-│   ├── speech/                 Whisper STT + gTTS TTS
-│   ├── explainability/         Confidence scoring from retrieval
-│   ├── utils/                  Settings, exceptions, logging
-│   ├── tests/                  Pytest unit tests
-│   ├── requirements.txt
-│   └── .env.example            Copy to .env and fill in your values
 │
-├── frontend/                  Flask web UI
-│   ├── app.py                  Page routes; proxies /api/identify-plant to the backend
-│   ├── backend_client.py       Thin HTTP client for the FastAPI backend (list/get plants, chat, identify)
-│   ├── config.py                BACKEND_API_URL / timeout / secret key, from env
-│   ├── database.py              Legacy MySQL connection helper (see Known issues below)
-│   ├── templates/                Jinja2 pages (dashboard, chat, identify herb, explore herbs, contribute, auth)
-│   ├── static/{css,js,images}    Front-end assets
+├── backend/
+│   ├── app.py
+│   │   └── Combined FastAPI application:
+│   │       chatbot + plant identification routers,
+│   │       CORS, and application lifespan
+│   │
+│   ├── api/
+│   │   └── Chat, plant, health route definitions
+│   │       and Pydantic schemas
+│   │
+│   ├── routers/
+│   │   └── plant_id.py
+│   │       └── POST /api/identify-plant
+│   │           Image upload → RF-DETR
+│   │
+│   ├── ml/
+│   │   └── inference.py
+│   │       └── Loads the trained RF-DETR checkpoint
+│   │
+│   ├── models/
+│   │   └── Trained model weights + training configuration
+│   │
+│   ├── database/
+│   │   └── SQLite schema, data import, and query helpers
+│   │
+│   ├── rag/
+│   │   └── Ingestion, embeddings, retrieval,
+│   │       and prompt building
+│   │
+│   ├── llm/
+│   │   └── generator.py
+│   │       └── Ollama / OpenAI / Mock LLM providers
+│   │
+│   ├── translation/
+│   │   └── Language detection + translation
+│   │
+│   ├── speech/
+│   │   └── Whisper STT + gTTS TTS
+│   │
+│   ├── explainability/
+│   │   └── Confidence scoring from retrieval
+│   │
+│   ├── utils/
+│   │   └── Settings, exceptions, and logging
+│   │
+│   ├── tests/
+│   │   └── Pytest unit tests
+│   │
+│   ├── requirements.txt
+│   └── .env.example
+│       └── Copy to .env and configure values
+│
+├── frontend/
+│   ├── app.py
+│   │   └── Flask page routes
+│   │       + /api/identify-plant proxy
+│   │
+│   ├── backend_client.py
+│   │   └── HTTP client for FastAPI backend
+│   │       - List/get plants
+│   │       - Chat
+│   │       - Plant identification
+│   │
+│   ├── config.py
+│   │   └── BACKEND_API_URL / timeout / secret key
+│   │
+│   ├── database.py
+│   │   └── Legacy MySQL connection helper
+│   │
+│   ├── templates/
+│   │   └── Jinja2 pages:
+│   │       dashboard
+│   │       chat
+│   │       identify herb
+│   │       explore herbs
+│   │       contribute
+│   │       authentication
+│   │
+│   ├── static/
+│   │   ├── css/
+│   │   ├── js/
+│   │   └── images/
+│   │
 │   └── requirements.txt
 │
-└── Explore Herb/               Reference plant photos used by the gallery/report
+├── Explore Herb/
+│   └── Reference plant photos used by
+│       the gallery and project report
+│
+└── README.md
 ```
 
-## 3. Setup
+---
 
-### 3.1 Prerequisites
+# 3. Setup
 
-- Python 3.10+
-- `ffmpeg` on your PATH (required by Whisper for audio decoding, backend only)
-- MySQL server (only needed for the frontend's `/dashboard` and
-  `/explore-herbs` pages — see Known issues)
-- Internet access for first-time setup (Hugging Face embedding model
-  download, and optionally Ollama/OpenAI/Google Translate/gTTS at runtime)
+## 3.1 Prerequisites
 
-### 3.2 Backend
+The following software and services are required:
+
+* **Python 3.10+**
+* **FFmpeg** added to the system `PATH`
+
+  * Required by Whisper for audio decoding
+  * Backend only
+* **MySQL Server**
+
+  * Required only for the frontend `/dashboard` and `/explore-herbs` pages
+  * See the Known Issues section
+* **Internet access**
+
+  * Required during first-time setup for:
+
+    * Hugging Face embedding model download
+    * Optional Ollama/OpenAI services
+    * Google Translate
+    * gTTS at runtime
+
+---
+
+# 3.2 Backend Setup
+
+Navigate to the backend directory:
 
 ```bash
 cd backend
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-
-cp .env.example .env
-# Default LLM_PROVIDER=ollama — install Ollama (https://ollama.com) and run
-# `ollama pull llama3.2` once. Prefer no local install? Set LLM_PROVIDER=mock
-# for a zero-setup, extractive-only fallback, or LLM_PROVIDER=openai with an
-# OPENAI_API_KEY.
-
-python -m database.create_db      # creates database/plants.db schema
-python -m database.import_data    # imports the source .xlsx datasets
-python -m rag.ingest               # embeds all plants into ChromaDB
-
-uvicorn app:app --reload --port 8000
-# or, on Windows: double-click run_backend.bat
 ```
 
-Open `http://127.0.0.1:8000/docs` for interactive API docs, or
-`http://127.0.0.1:8000/health` to confirm readiness.
+Create and activate a virtual environment:
 
-Run the test suite (mocks every network/ML dependency, runs in seconds):
+```bash
+python -m venv .venv
+```
+
+### Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+### Linux / macOS
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Create the environment file:
+
+```bash
+cp .env.example .env
+```
+
+### LLM Configuration
+
+The default provider is:
+
+```env
+LLM_PROVIDER=ollama
+```
+
+Install Ollama and pull the model once:
+
+```bash
+ollama pull llama3.2
+```
+
+For a zero-setup offline fallback:
+
+```env
+LLM_PROVIDER=mock
+```
+
+For OpenAI:
+
+```env
+LLM_PROVIDER=openai
+OPENAI_API_KEY=your_api_key
+```
+
+### Initialize the Database
+
+Create the SQLite database schema:
+
+```bash
+python -m database.create_db
+```
+
+Import the source `.xlsx` datasets:
+
+```bash
+python -m database.import_data
+```
+
+Build the ChromaDB vector index:
+
+```bash
+python -m rag.ingest
+```
+
+### Start the Backend
+
+```bash
+uvicorn app:app --reload --port 8000
+```
+
+On Windows, you can alternatively use:
+
+```text
+run_backend.bat
+```
+
+### Backend URLs
+
+Interactive API documentation:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Health check:
+
+```text
+http://127.0.0.1:8000/health
+```
+
+### Run Tests
+
+The test suite mocks network and ML dependencies and should complete within seconds:
 
 ```bash
 pytest tests/ -v
 ```
 
-### 3.3 Frontend
+---
+
+# 3.3 Frontend Setup
+
+Navigate to the frontend directory:
 
 ```bash
 cd frontend
+```
+
+Create a virtual environment:
+
+```bash
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+```
+
+### Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+### Linux / macOS
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
-The frontend expects the backend running at `http://127.0.0.1:8000` by
-default (override via `BACKEND_API_URL` in a `frontend/.env` file — see
-`config.py`). The `/dashboard` and `/explore-herbs` pages additionally
-require a MySQL database (`MYSQL_HOST`, `MYSQL_USER`, `MYSQL_PASSWORD`,
-`MYSQL_DATABASE` env vars — see Known issues below).
+The frontend expects the FastAPI backend to run at:
+
+```text
+http://127.0.0.1:8000
+```
+
+This can be overridden using:
+
+```env
+BACKEND_API_URL=http://127.0.0.1:8000
+```
+
+inside `frontend/.env`.
+
+The following frontend pages additionally require MySQL:
+
+* `/dashboard`
+* `/explore-herbs`
+
+Required MySQL environment variables:
+
+```env
+MYSQL_HOST=
+MYSQL_USER=
+MYSQL_PASSWORD=
+MYSQL_DATABASE=
+```
+
+Start the Flask frontend:
 
 ```bash
 python app.py
 ```
 
-Visit `http://127.0.0.1:5000`.
+Open:
 
-## 4. Features
-
-- **AI Assistant** (`/chat`) — RAG-powered chat backed by the 130-plant
-  knowledge base, multilingual, with cited sources and a confidence score.
-- **Identify Herb** (`/identify-herb`) — upload a photo or capture one live
-  from your camera; a trained RF-DETR model identifies the plant and looks
-  up its traditional uses.
-- **Herb Knowledge** (`/explore-herbs`) — searchable gallery of the full
-  plant database.
-- **Dashboard** (`/dashboard`) — herb counts and activity overview.
-- **Contribute** (`/contribute`) — community contribution page.
-
-## 5. API reference (backend)
-
-| Method | Path                    | Purpose                                             |
-|--------|-------------------------|------------------------------------------------------|
-| GET    | `/health`               | Readiness/status: LLM provider, DB, vector store     |
-| POST   | `/chat`                 | Ask a text question, get a grounded answer + audio   |
-| POST   | `/speech`               | Upload audio, transcribe, then run the same pipeline |
-| POST   | `/tts`                  | Synthesize speech for arbitrary text                 |
-| GET    | `/plants`               | List/search plants                                   |
-| GET    | `/plants/{id}`          | Look up a single plant record directly               |
-| GET    | `/plants/lookup`        | Resolve a raw ML label to a plant record              |
-| POST   | `/api/identify-plant`   | Upload a photo, get the identified plant (RF-DETR)    |
-| GET    | `/`                     | Service banner / links to docs and health              |
-
-Every error response has a consistent structured shape:
-
-```json
-{ "detail": { "status": "error", "error_type": "RetrievalError", "detail": "..." } }
+```text
+http://127.0.0.1:5000
 ```
 
-See `http://127.0.0.1:8000/docs` for full request/response schemas.
+---
 
-## 6. Known issues / things to clean up
+# 4. Features
 
-- **`frontend/database.py` (MySQL) is legacy but still in active use.** Its
-  own docstring says it's unused, but `frontend/app.py`'s `/dashboard` and
-  `/explore-herbs` routes still call it directly. The rest of the frontend
-  (plant lookups, chat, identify) goes through the FastAPI backend instead
-  (SQLite-backed). These two routes should either be migrated to
-  `backend_client.py` or the MySQL dependency should be documented as a
-  hard requirement.
-- **`MYSQL_PASSWORD` has a hardcoded fallback value** in
-  `frontend/database.py` despite the docstring claiming otherwise —
-  rotate/remove that default and require the env var to be set explicitly.
-- **`frontend/app.py`'s `/api/identify-plant` and `/api/chat` routes bypass
-  `backend_client.py` and `config.py`**, hardcoding `BACKEND_URL` instead of
-  reusing the centralized `BACKEND_API_URL` setting. `/api/chat` is also
-  currently a placeholder that doesn't call the real backend (the AI
-  Assistant page instead calls the FastAPI backend directly from browser
-  JS). Worth consolidating so there's exactly one code path per feature.
-#   N a t i v e M e d _ A I _ S y s t e m  
- 
+## AI Assistant
+
+**Route:** `/chat`
+
+* RAG-powered conversational assistant
+* 130-plant medicinal knowledge base
+* Supports multiple regional languages
+* Text and speech interaction
+* Source citations
+* Retrieved passage display
+* Similarity scores
+* Retrieval-based confidence score
+
+## Identify Herb
+
+**Route:** `/identify-herb`
+
+Users can:
+
+* Upload a plant image
+* Capture an image using the device camera
+* Identify the plant using the trained **RF-DETR** model
+* Retrieve the corresponding medicinal information
+
+## Herb Knowledge
+
+**Route:** `/explore-herbs`
+
+Provides:
+
+* Searchable plant gallery
+* Complete 130-plant database
+* Plant images
+* Medicinal knowledge
+
+## Dashboard
+
+**Route:** `/dashboard`
+
+Provides:
+
+* Herb count
+* Activity overview
+* System-level information
+
+## Contribute
+
+**Route:** `/contribute`
+
+Provides a community contribution interface for adding or sharing medicinal plant knowledge.
+
+---
+
+# 5. API Reference
+
+The FastAPI backend provides the following endpoints:
+
+| Method | Endpoint              | Purpose                                                                    |
+| ------ | --------------------- | -------------------------------------------------------------------------- |
+| `GET`  | `/health`             | Returns service readiness, LLM provider, database, and vector-store status |
+| `POST` | `/chat`               | Accepts a text question and returns a grounded answer with optional audio  |
+| `POST` | `/speech`             | Uploads audio, performs speech-to-text, and runs the same RAG pipeline     |
+| `POST` | `/tts`                | Converts arbitrary text into speech                                        |
+| `GET`  | `/plants`             | Lists or searches medicinal plants                                         |
+| `GET`  | `/plants/{id}`        | Retrieves a single plant record                                            |
+| `GET`  | `/plants/lookup`      | Resolves a raw ML label to a plant record                                  |
+| `POST` | `/api/identify-plant` | Uploads a plant image and identifies it using RF-DETR                      |
+| `GET`  | `/`                   | Service banner with links to documentation and health status               |
+
+### Error Response Format
+
+All API errors follow a consistent structured format:
+
+```json
+{
+  "detail": {
+    "status": "error",
+    "error_type": "RetrievalError",
+    "detail": "..."
+  }
+}
+```
+
+For complete request and response schemas, open:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+---
+
+# 6. Known Issues and Recommended Cleanup
+
+## 6.1 Legacy MySQL Dependency
+
+`frontend/database.py` is described as legacy and unused in its own documentation. However, the following routes in `frontend/app.py` still access it directly:
+
+* `/dashboard`
+* `/explore-herbs`
+
+The rest of the frontend uses the FastAPI backend, which is backed by SQLite.
+
+### Recommended Solution
+
+Migrate the remaining MySQL-dependent routes to `backend_client.py`.
+
+This would allow the entire application to use the FastAPI backend and SQLite as the single source of truth.
+
+---
+
+## 6.2 Hardcoded MySQL Password Fallback
+
+`frontend/database.py` currently contains a hardcoded fallback value for `MYSQL_PASSWORD`, despite its documentation indicating that the password should come from environment variables.
+
+### Recommended Solution
+
+Remove the hardcoded fallback and require:
+
+```env
+MYSQL_PASSWORD=your_password
+```
+
+to be explicitly configured.
+
+---
+
+## 6.3 Duplicate Backend URL Configuration
+
+The following routes in `frontend/app.py` currently bypass `backend_client.py` and `config.py`:
+
+* `/api/identify-plant`
+* `/api/chat`
+
+They use a hardcoded `BACKEND_URL` instead of the centralized:
+
+```env
+BACKEND_API_URL
+```
+
+### Recommended Solution
+
+Use the centralized backend configuration and `backend_client.py` consistently.
+
+This will ensure that each feature has a single communication path to the FastAPI backend.
+
+---
+
+# 7. System Design Summary
+
+NativeMed AI follows a modular, offline-friendly architecture in which:
+
+```text
+                    NativeMed AI
+                         │
+          ┌──────────────┴──────────────┐
+          │                             │
+     AI Assistant                 Plant Identification
+          │                             │
+       RAG Pipeline                  RF-DETR
+          │                             │
+    SQLite + ChromaDB             Image Inference
+          │                             │
+          └──────────────┬──────────────┘
+                         │
+                  FastAPI Backend
+                         │
+                  HTTP Communication
+                         │
+                  Flask Frontend
+                         │
+                       User
+```
+
+The core principle is that **SQLite remains the source of truth**, while ChromaDB provides a rebuildable retrieval index and RF-DETR handles image-based plant identification.
+
+This architecture provides:
+
+* **Grounded AI responses**
+* **Reduced hallucination**
+* **Explainable retrieval**
+* **Multilingual interaction**
+* **Image-based plant identification**
+* **130-plant medicinal knowledge base**
+* **Modular backend services**
+* **Swappable LLM providers**
+* **Local/offline LLM capability through Ollama**
+* **Independent frontend and backend deployment**
